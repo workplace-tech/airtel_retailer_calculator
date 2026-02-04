@@ -6,8 +6,7 @@
 <title>Airtel Retailer Earning Calculator</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet"
- href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
 <style>
 body{font-family:Poppins;background:#f5f6fa;margin:0}
@@ -44,8 +43,7 @@ button{border:none;border-radius:10px;padding:10px 16px;font-weight:700;color:#f
 </div>
 
 <div class="row">
-  <div>Recharge Margin (3%)</div>
-  <div></div>
+  <div>Recharge Margin (3%)</div><div></div>
   <div class="result" id="recharge">₹0.00</div>
 </div>
 
@@ -58,7 +56,7 @@ button{border:none;border-radius:10px;padding:10px 16px;font-weight:700;color:#f
 <div class="card-body">
 
 <div class="row">
-  <div>MNP Count (Monthly)</div>
+  <div>MNP Count for the month</div>
   <input id="mnpCount" type="number" oninput="calc()">
   <div class="result" id="mnpCountDisp">0</div>
 </div>
@@ -144,7 +142,6 @@ button{border:none;border-radius:10px;padding:10px 16px;font-weight:700;color:#f
 <!-- TOTAL -->
 <div class="card">
 <div class="card-body">
-
 <div class="row summary">
   <div>Total Incentive</div><div></div>
   <div class="result" id="total">₹0.00</div>
@@ -154,10 +151,9 @@ button{border:none;border-radius:10px;padding:10px 16px;font-weight:700;color:#f
 <button class="secondary" onclick="resetAll()">Reset</button>
 <button onclick="shareTelegram()">Telegram</button>
 <button class="whatsapp" onclick="shareWhatsApp()">
-  <i class="fa-brands fa-whatsapp"></i>
+<i class="fa-brands fa-whatsapp"></i>
 </button>
 </div>
-
 </div>
 </div>
 
@@ -172,50 +168,38 @@ function calc(){
 const tertiary=v('tertiary');
 const lapu=tertiary/30;
 
-lapuEl('recharge',tertiary*0.03);
+document.getElementById('recharge').innerText=f(tertiary*0.03);
 
 const mnpCount=v('mnpCount');
 document.getElementById('mnpCountDisp').innerText=mnpCount;
 
-lapuEl('mnpIncentive',mnpCount*mnpRate(mnpCount));
+const mnpInc=mnpCount*mnpRate(mnpCount);
+document.getElementById('mnpIncentive').innerText=f(mnpInc);
+
 document.getElementById('mnpOtfCount').innerText=mnpCount;
-lapuEl('mnpOtfVal',mnpCount*235);
+document.getElementById('mnpOtfVal').innerText=f(mnpCount*235);
 
-lapuEl('mnpDaysVal',lapu*v('mnpDays')*0.014);
-lapuEl('nonMnpVal',v('nonMnp')*135);
-lapuEl('wifiDaysVal',lapu*v('wifiDays')*0.015);
-lapuEl('wifiLeadsVal',v('wifiLeads')*150);
-lapuEl('simSwapVal',v('simSwap')*10);
-lapuEl('upgradeVal',399*v('upgrade')*0.03);
-lapuEl('starVal',v('star')*299*0.005);
-lapuEl('sbaVal',v('sba')*45);
+document.getElementById('mnpDaysVal').innerText=f(lapu*v('mnpDays')*0.014);
+document.getElementById('nonMnpVal').innerText=f(v('nonMnp')*135);
+document.getElementById('wifiDaysVal').innerText=f(lapu*v('wifiDays')*0.015);
+document.getElementById('wifiLeadsVal').innerText=f(v('wifiLeads')*150);
+document.getElementById('simSwapVal').innerText=f(v('simSwap')*10);
 
-const total =
-  num('recharge') +
-  num('mnpIncentive') +
-  num('mnpOtfVal') +
-  num('mnpDaysVal') +
-  num('nonMnpVal') +
-  num('wifiDaysVal') +
-  num('wifiLeadsVal') +
-  num('simSwapVal') +
-  num('upgradeVal') +
-  num('starVal') +
-  num('sbaVal');
+document.getElementById('upgradeVal').innerText=f(399*v('upgrade')*0.03);
+document.getElementById('starVal').innerText=f(v('star')*299*0.005);
+document.getElementById('sbaVal').innerText=f(v('sba')*45);
 
-lapuEl('total',total);
+const total=[
+  'recharge','mnpIncentive','mnpOtfVal','mnpDaysVal','nonMnpVal',
+  'wifiDaysVal','wifiLeadsVal','simSwapVal','upgradeVal','starVal','sbaVal'
+].map(id=>Number(document.getElementById(id).innerText.replace(/[₹,]/g,''))||0)
+.reduce((a,b)=>a+b,0);
+
+document.getElementById('total').innerText=f(total);
 }
 
-function num(id){
-return Number(document.getElementById(id).innerText.replace(/[₹,]/g,''))||0;
-}
-function lapuEl(id,val){
-document.getElementById(id).innerText=f(val);
-}
-function resetAll(){
-document.querySelectorAll('input').forEach(i=>i.value='');
-calc();
-}
+function resetAll(){document.querySelectorAll('input').forEach(i=>i.value='');calc()}
+
 function buildSummary(){
 return `AIRTEL RETAILER EARNING SUMMARY
 ----------------------------------
@@ -225,8 +209,6 @@ Recharge Margin : ${document.getElementById('recharge').innerText}
 MNP Count : ${v('mnpCount')}
 MNP Incentive : ${document.getElementById('mnpIncentive').innerText}
 MNP OTF : ${document.getElementById('mnpOtfVal').innerText}
-MNP Days : ${document.getElementById('mnpDaysVal').innerText}
-Non-MNP : ${document.getElementById('nonMnpVal').innerText}
 
 WiFi Days : ${document.getElementById('wifiDaysVal').innerText}
 WiFi Leads : ${document.getElementById('wifiLeadsVal').innerText}
@@ -238,14 +220,15 @@ SBA Opening : ${document.getElementById('sbaVal').innerText}
 
 TOTAL INCENTIVE : ${document.getElementById('total').innerText}`;
 }
+
 function shareTelegram(){
 window.open("https://t.me/share/url?text="+encodeURIComponent(buildSummary()),"_blank");
 }
 function shareWhatsApp(){
 window.open("https://wa.me/?text="+encodeURIComponent(buildSummary()),"_blank");
 }
+
 calc();
 </script>
 </body>
 </html>
-
