@@ -57,9 +57,21 @@
 	<div class="card-body">
 
 	<div class="row">
+	  <div>Total GAD</div>
+	  <input id="totalGad" type="number" min="0" step="1" oninput="calc()">
+	  <div></div>
+	</div>
+
+	<div class="row">
 	  <div>MNP Count for the month</div>
-	  <input id="mnpCount" type="number" oninput="calc()">
+	  <input id="mnpCount" type="number" min="0" step="1" oninput="calc()">
 	  <div class="result" id="mnpIncentive">₹0.00</div>
+	</div>
+
+	<div class="row">
+	  <div>MNP Slab Rate (Auto)</div>
+	  <div></div>
+	  <div class="result" id="mnpRate">₹0.00</div>
 	</div>
 
 	<div class="row">
@@ -75,9 +87,21 @@
 	</div>
 
 	<div class="row">
-	  <div>Non-MNP Count</div>
-	  <input id="nonMnp" type="number" oninput="calc()">
+	  <div>Total Incentive per MNP</div>
+	  <div></div>
+	  <div class="result" id="incentivePerMnp">₹0.00</div>
+	</div>
+
+	<div class="row">
+	  <div>Non-MNP Count (Auto)</div>
+	  <div class="fake-input" id="nonMnpCount">0</div>
 	  <div class="result" id="nonMnpVal">₹0.00</div>
+	</div>
+
+	<div class="row">
+	  <div>Incentive per GAD</div>
+	  <div></div>
+	  <div class="result" id="incentivePerGad">₹0.00</div>
 	</div>
 
 	</div>
@@ -153,35 +177,50 @@
 	const f=n=>"₹"+n.toLocaleString('en-IN',{minimumFractionDigits:2});
 	const fr=n=>"₹"+Math.round(n).toLocaleString('en-IN');
 	const v=id=>+document.getElementById(id).value||0;
-	const mnpRate=()=>200;
+	const mnpRate=totalGad=>totalGad>=75?260:totalGad>=35?210:totalGad>=20?160:0;
 
 	function calc(){
 	const tertiary=v('tertiary');
 	const lapu=tertiary/30;
+	const rechargeValue=tertiary*0.03;
 
-	document.getElementById('recharge').innerText=f(tertiary*0.03);
+	document.getElementById('recharge').innerText=f(rechargeValue);
 
+	const totalGad=v('totalGad');
 	const mnpCount=v('mnpCount');
-	const mnpInc=mnpCount*mnpRate(mnpCount);
-	document.getElementById('mnpIncentive').innerText=f(mnpInc);
+	const slabRate=mnpRate(totalGad);
+	const mnpIncentiveValue=mnpCount*slabRate;
+	document.getElementById('mnpIncentive').innerText=f(mnpIncentiveValue);
+	document.getElementById('mnpRate').innerText=fr(slabRate);
 
 	document.getElementById('mnpOtfCount').innerText=mnpCount;
-	document.getElementById('mnpOtfVal').innerText=f(mnpCount*235);
+	const mnpOtfValue=mnpCount*235;
+	document.getElementById('mnpOtfVal').innerText=f(mnpOtfValue);
 
-	document.getElementById('mnpDaysVal').innerText=fr(lapu*v('mnpDays')*0.014);
-	document.getElementById('nonMnpVal').innerText=f(v('nonMnp')*135);
-	document.getElementById('wifiLeadsVal').innerText=f(v('wifiLeads')*400);
-	document.getElementById('simSwapVal').innerText=f(v('simSwap')*10);
+	const mnpDaysValue=lapu*v('mnpDays')*0.014;
+	document.getElementById('mnpDaysVal').innerText=f(mnpDaysValue);
+	const totalMnpIncentive=mnpIncentiveValue+mnpOtfValue+mnpDaysValue;
+	document.getElementById('incentivePerMnp').innerText=f(mnpCount?totalMnpIncentive/mnpCount:0);
 
-	document.getElementById('upgradeVal').innerText=f(v('upgrade')*400);
-	document.getElementById('starVal').innerText=f(v('star')*0.02);
-	document.getElementById('sbaVal').innerText=f(v('sba')*55);
+	const nonMnpCount=totalGad-mnpCount;
+	document.getElementById('nonMnpCount').innerText=nonMnpCount;
+	const nonMnpValue=nonMnpCount*135;
+	document.getElementById('nonMnpVal').innerText=f(nonMnpValue);
+	document.getElementById('incentivePerGad').innerText=f(totalGad?(totalMnpIncentive+nonMnpValue)/totalGad:0);
 
-	const total=[
-	  'recharge','mnpIncentive','mnpOtfVal','mnpDaysVal','nonMnpVal',
-	  'wifiLeadsVal','simSwapVal','upgradeVal','starVal','sbaVal'
-	].map(id=>Number(document.getElementById(id).innerText.replace(/[₹,]/g,''))||0)
-	.reduce((a,b)=>a+b,0);
+	const wifiValue=v('wifiLeads')*400;
+	document.getElementById('wifiLeadsVal').innerText=f(wifiValue);
+	const simSwapValue=v('simSwap')*10;
+	document.getElementById('simSwapVal').innerText=f(simSwapValue);
+
+	const dthValue=v('upgrade')*400;
+	document.getElementById('upgradeVal').innerText=f(dthValue);
+	const afsValue=v('star')*0.02;
+	document.getElementById('starVal').innerText=f(afsValue);
+	const sbaValue=v('sba')*55;
+	document.getElementById('sbaVal').innerText=f(sbaValue);
+
+	const total=rechargeValue+totalMnpIncentive+nonMnpValue+wifiValue+simSwapValue+dthValue+afsValue+sbaValue;
 
 	document.getElementById('total').innerText=f(total);
 	}
@@ -197,13 +236,17 @@
 	LAPU Tertiary : ${f(v('tertiary'))}
 	Recharge Margin (3%) : ${document.getElementById('recharge').innerText}
 
+	Total GAD : ${v('totalGad')}
 	MNP Count : ${v('mnpCount')}
 	MNP Incentive : ${document.getElementById('mnpIncentive').innerText}
+	MNP Slab Rate : ${document.getElementById('mnpRate').innerText}
 	MNP OTF Incentive : ${document.getElementById('mnpOtfVal').innerText}
 	MNP Participation Days : ${v('mnpDays')}
 	MNP Participation Incentive : ${document.getElementById('mnpDaysVal').innerText}
-	Non MNP Count : ${v('nonMnp')}
+	Total Incentive per MNP : ${document.getElementById('incentivePerMnp').innerText}
+	Non MNP Count : ${document.getElementById('nonMnpCount').innerText}
 	Non MNP OTF : ${document.getElementById('nonMnpVal').innerText}
+	Incentive per GAD : ${document.getElementById('incentivePerGad').innerText}
 
 	WiFi Leads : ${v('wifiLeads')}
 	WiFi Leads Incentive : ${document.getElementById('wifiLeadsVal').innerText}
