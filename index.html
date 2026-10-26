@@ -15,9 +15,12 @@
 	.card{background:#fff;border-radius:12px;box-shadow:0 4px 14px rgba(0,0,0,.08);margin-bottom:12px}
 	.card-header{background:#d32f2f;color:#fff;padding:10px 12px;font-weight:700}
 	.card-body{padding:12px}
-	.row{display:grid;grid-template-columns:50% 25% 25%;gap:10px;align-items:center;padding:6px 0}
-	input{width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;text-align:right}
-	.fake-input{width:100%;padding:8px;border-radius:8px;border:1px solid #ccc;text-align:right;background:#f9f9f9;font-size:14px;font-weight:600;color:#333}
+	.row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);gap:10px;align-items:center;padding:6px 0}
+	input,.fake-input{box-sizing:border-box;min-width:0;width:100%;height:38px;padding:8px;border-radius:8px;border:1px solid #ccc;text-align:right;font-family:inherit;font-size:14px;line-height:20px}
+	.fake-input{display:flex;align-items:center;justify-content:flex-end;background:#f9f9f9;font-weight:600;color:#333}
+	.input-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;align-items:center}
+	.input-pair input[readonly]{background:#f9f9f9;font-weight:600;color:#333}
+	@media(max-width:540px){.row{grid-template-columns:minmax(0,1.3fr) minmax(0,1.7fr) minmax(0,1fr);gap:6px;font-size:12px}input,.fake-input{padding:7px 4px;font-size:12px}.card-body{padding:10px}.container{padding:8px}}
 	.result{text-align:right;font-weight:700;color:#d32f2f}
 	.summary{font-size:16px;font-weight:800}
 	.controls{display:flex;gap:10px;justify-content:center;margin-top:10px}
@@ -39,13 +42,13 @@
 
 	<div class="row">
 	  <div>LAPU Tertiary</div>
-	  <input id="tertiary" type="number" oninput="calc()">
+	  <div class="input-pair"><input id="tertiary" aria-label="tertiary input" type="number" oninput="calc()"><input type="text" readonly data-rate="recharge" aria-label="Recharge margin" title="Recharge margin"></div>
 	  <div></div>
 	</div>
 
 	<div class="row">
 	  <div>Recharge Margin (3%)</div><div></div>
-	  <div class="result" id="recharge">₹0.00</div>
+	  <div class="result" id="recharge">₹0</div>
 	</div>
 
 	</div>
@@ -64,44 +67,44 @@
 
 	<div class="row">
 	  <div>MNP Count for the month</div>
-	  <input id="mnpCount" type="number" min="0" step="1" oninput="calc()">
-	  <div class="result" id="mnpIncentive">₹0.00</div>
+	  <div class="input-pair"><input id="mnpCount" aria-label="mnpCount input" type="number" min="0" step="1" oninput="calc()"><input type="text" readonly data-rate="mnpSlab" aria-label="MNP slab rate" title="MNP slab rate"></div>
+	  <div class="result" id="mnpIncentive">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>MNP Slab Rate (Auto)</div>
 	  <div></div>
-	  <div class="result" id="mnpRate">₹0.00</div>
+	  <div class="result" id="mnpRate">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>MNP OTF (Auto)</div>
-	  <div class="fake-input" id="mnpOtfCount">0</div>
-	  <div class="result" id="mnpOtfVal">₹0.00</div>
+	  <div class="input-pair"><div class="fake-input" id="mnpOtfCount">0</div><input type="text" readonly data-rate="mnpOtf" aria-label="MNP OTF rate" title="MNP OTF rate"></div>
+	  <div class="result" id="mnpOtfVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>MNP Participation Days</div>
-	  <input id="mnpDays" type="number" oninput="calc()">
-	  <div class="result" id="mnpDaysVal">₹0.00</div>
+	  <div class="input-pair"><input id="mnpDays" aria-label="mnpDays input" type="number" oninput="calc()"><input type="text" readonly data-rate="participation" aria-label="Participation rate on daily LAPU" title="Participation rate on daily LAPU"></div>
+	  <div class="result" id="mnpDaysVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>Total Incentive per MNP</div>
 	  <div></div>
-	  <div class="result" id="incentivePerMnp">₹0.00</div>
+	  <div class="result" id="incentivePerMnp">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>Non-MNP Count (Auto)</div>
-	  <div class="fake-input" id="nonMnpCount">0</div>
-	  <div class="result" id="nonMnpVal">₹0.00</div>
+	  <div class="input-pair"><div class="fake-input" id="nonMnpCount">0</div><input type="text" readonly data-rate="nonMnp" aria-label="Non-MNP rate" title="Non-MNP rate"></div>
+	  <div class="result" id="nonMnpVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>Incentive per GAD</div>
 	  <div></div>
-	  <div class="result" id="incentivePerGad">₹0.00</div>
+	  <div class="result" id="incentivePerGad">₹0</div>
 	</div>
 
 	</div>
@@ -114,14 +117,14 @@
 
 	<div class="row">
 	  <div>WiFi Leads</div>
-	  <input id="wifiLeads" type="number" oninput="calc()">
-	  <div class="result" id="wifiLeadsVal">₹0.00</div>
+	  <div class="input-pair"><input id="wifiLeads" aria-label="wifiLeads input" type="number" oninput="calc()"><input type="text" readonly data-rate="wifi" aria-label="WiFi lead rate" title="WiFi lead rate"></div>
+	  <div class="result" id="wifiLeadsVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>SIM Swap Count</div>
-	  <input id="simSwap" type="number" oninput="calc()">
-	  <div class="result" id="simSwapVal">₹0.00</div>
+	  <div class="input-pair"><input id="simSwap" aria-label="simSwap input" type="number" oninput="calc()"><input type="text" readonly data-rate="simSwap" aria-label="SIM swap rate" title="SIM swap rate"></div>
+	  <div class="result" id="simSwapVal">₹0</div>
 	</div>
 
 	</div>
@@ -134,20 +137,20 @@
 
 	<div class="row">
 	  <div>DTH Leads</div>
-	  <input id="upgrade" type="number" oninput="calc()">
-	  <div class="result" id="upgradeVal">₹0.00</div>
+	  <div class="input-pair"><input id="upgrade" aria-label="upgrade input" type="number" oninput="calc()"><input type="text" readonly data-rate="dth" aria-label="DTH lead rate" title="DTH lead rate"></div>
+	  <div class="result" id="upgradeVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>AFS ( Loan )</div>
-	  <input id="star" type="number" oninput="calc()">
-	  <div class="result" id="starVal">₹0.00</div>
+	  <div class="input-pair"><input id="star" aria-label="star input" type="number" oninput="calc()"><input type="text" readonly data-rate="afs" aria-label="AFS loan rate" title="AFS loan rate"></div>
+	  <div class="result" id="starVal">₹0</div>
 	</div>
 
 	<div class="row">
 	  <div>SBA Opening</div>
-	  <input id="sba" type="number" oninput="calc()">
-	  <div class="result" id="sbaVal">₹0.00</div>
+	  <div class="input-pair"><input id="sba" aria-label="sba input" type="number" oninput="calc()"><input type="text" readonly data-rate="sba" aria-label="SBA opening rate" title="SBA opening rate"></div>
+	  <div class="result" id="sbaVal">₹0</div>
 	</div>
 
 	</div>
@@ -158,7 +161,7 @@
 	<div class="card-body">
 	<div class="row summary">
 	  <div>Total Incentive</div><div></div>
-	  <div class="result" id="total">₹0.00</div>
+	  <div class="result" id="total">₹0</div>
 	</div>
 
 	<div class="controls">
@@ -174,50 +177,56 @@
 	</div>
 
 	<script>
-	const f=n=>"₹"+n.toLocaleString('en-IN',{minimumFractionDigits:2});
-	const fr=n=>"₹"+Math.round(n).toLocaleString('en-IN');
+	const f=n=>"₹"+Math.round(n).toLocaleString('en-IN');
+	const rates={recharge:0.03,mnpOtf:235,participation:0.014,nonMnp:135,wifi:400,simSwap:10,dth:400,afs:0.02,sba:50};
+	const percentageRates=new Set(['recharge','participation','afs']);
+	document.querySelectorAll('[data-rate]').forEach(input=>{
+	  const key=input.dataset.rate;
+	  if(key!=='mnpSlab') input.value=percentageRates.has(key)?`${Number((rates[key]*100).toFixed(2))}%`:f(rates[key]);
+	});
 	const v=id=>+document.getElementById(id).value||0;
 	const mnpRate=totalGad=>totalGad>=75?260:totalGad>=35?210:totalGad>=20?160:0;
 
 	function calc(){
 	const tertiary=v('tertiary');
 	const lapu=tertiary/30;
-	const rechargeValue=tertiary*0.03;
+	const rechargeValue=tertiary*rates.recharge;
 
 	document.getElementById('recharge').innerText=f(rechargeValue);
 
 	const totalGad=v('totalGad');
 	const mnpCount=v('mnpCount');
 	const slabRate=mnpRate(totalGad);
+	document.querySelector('[data-rate="mnpSlab"]').value=f(slabRate);
 	const mnpIncentiveValue=mnpCount*slabRate;
 	document.getElementById('mnpIncentive').innerText=f(mnpIncentiveValue);
-	document.getElementById('mnpRate').innerText=fr(slabRate);
+	document.getElementById('mnpRate').innerText=f(slabRate);
 
 	document.getElementById('mnpOtfCount').innerText=mnpCount;
-	const mnpOtfValue=mnpCount*235;
+	const mnpOtfValue=mnpCount*rates.mnpOtf;
 	document.getElementById('mnpOtfVal').innerText=f(mnpOtfValue);
 
-	const mnpDaysValue=lapu*v('mnpDays')*0.014;
+	const mnpDaysValue=lapu*v('mnpDays')*rates.participation;
 	document.getElementById('mnpDaysVal').innerText=f(mnpDaysValue);
 	const totalMnpIncentive=mnpIncentiveValue+mnpOtfValue+mnpDaysValue;
 	document.getElementById('incentivePerMnp').innerText=f(mnpCount?totalMnpIncentive/mnpCount:0);
 
 	const nonMnpCount=totalGad-mnpCount;
 	document.getElementById('nonMnpCount').innerText=nonMnpCount;
-	const nonMnpValue=nonMnpCount*135;
+	const nonMnpValue=nonMnpCount*rates.nonMnp;
 	document.getElementById('nonMnpVal').innerText=f(nonMnpValue);
 	document.getElementById('incentivePerGad').innerText=f(totalGad?(totalMnpIncentive+nonMnpValue)/totalGad:0);
 
-	const wifiValue=v('wifiLeads')*400;
+	const wifiValue=v('wifiLeads')*rates.wifi;
 	document.getElementById('wifiLeadsVal').innerText=f(wifiValue);
-	const simSwapValue=v('simSwap')*10;
+	const simSwapValue=v('simSwap')*rates.simSwap;
 	document.getElementById('simSwapVal').innerText=f(simSwapValue);
 
-	const dthValue=v('upgrade')*400;
+	const dthValue=v('upgrade')*rates.dth;
 	document.getElementById('upgradeVal').innerText=f(dthValue);
-	const afsValue=v('star')*0.02;
+	const afsValue=v('star')*rates.afs;
 	document.getElementById('starVal').innerText=f(afsValue);
-	const sbaValue=v('sba')*55;
+	const sbaValue=v('sba')*rates.sba;
 	document.getElementById('sbaVal').innerText=f(sbaValue);
 
 	const total=rechargeValue+totalMnpIncentive+nonMnpValue+wifiValue+simSwapValue+dthValue+afsValue+sbaValue;
@@ -226,7 +235,7 @@
 	}
 
 	function resetAll(){
-	  document.querySelectorAll('input').forEach(i=>i.value='');
+	  document.querySelectorAll('input:not([readonly])').forEach(i=>i.value='');
 	  calc();
 	}
 
@@ -284,4 +293,3 @@
 	</script>
 	</body>
 	</html>
-
